@@ -19,7 +19,7 @@ RUN apt-get update \
   && apt-get install -y vim \
   && apt-get install -y nodejs \
   && apt-get install -y libicu-dev \
-  && docker-php-ext-install pdo_mysql intl mbstring
+  && docker-php-ext-install pdo_mysql intl mbstring exif
 
 # ユーザ作成
 RUN useradd -m --uid ${DOCKER_UID} --groups sudo ${DOCKER_USER} \

@@ -5,6 +5,7 @@ use App\Controller\AppController;
 
 use Cake\Event\Event; // added.
 use Exception; // added.
+use Cake\Filesystem\Folder;
 
 class AuctionController extends AuctionBaseController
 {
@@ -88,15 +89,45 @@ class AuctionController extends AuctionBaseController
 		if ($this->request->is('post')) {
 			// $biditemにフォームの送信内容を反映
 			$biditem = $this->Biditems->patchEntity($biditem, $this->request->getData());
-			// $biditemを保存する
-			if ($this->Biditems->save($biditem)) {
+			$biditem->image_file_name = '';
+
+			try{
+				//画像のバリデーションチェック
+				$img_validation = array(IMAGETYPE_JPEG,IMAGETYPE_PNG,IMAGETYPE_GIF);
+				$image_file = $this->request->data['image_file_name'];
+
+				// 画像でなければ例外処理
+				if(!in_array(\exif_imagetype($image_file['tmp_name']),$img_validation)){
+					throw new Exception('画像が読み込めませんでした。jpeg,pngまたはgif形式で選択してください。');
+				}
+
+				// $biditemを保存する
+				// saveに失敗したら例外処理
+				if (!$this->Biditems->save($biditem)) {
+					throw new Exception('保存に失敗しました。');
+				}
+				$id = $biditem->id;
+				// 画像ファイル名を作成する
+				$image_file_name = $id.'_'.date('YmdHis').'_'.$this->request->data['image_file_name']['name'];
+				// 画像をディレクトリに保存する
+				$dir = new Folder(WWW_ROOT.'img/biditem'.$id, true);
+				move_uploaded_file($image_file['tmp_name'],$dir->path.'/'.$image_file_name);
+				// ファイル名をエンティティにセットする
+				$biditem->image_file_name = $image_file_name;
+				// $biditemを更新する
+				// saveに失敗したら例外処理
+				if (!$this->Biditems->save($biditem)) {
+					throw new Exception('保存に失敗しました。');
+				}
 				// 成功時のメッセージ
 				$this->Flash->success(__('保存しました。'));
 				// トップページ（index）に移動
 				return $this->redirect(['action' => 'index']);
+
+			}catch(Exception $e){
+				// 失敗時のメッセージ
+				$this->Flash->error(__($e->getMessage() . 'もう一度入力下さい。'));
 			}
-			// 失敗時のメッセージ
-			$this->Flash->error(__('保存に失敗しました。もう一度入力下さい。'));
 		}
 		// 値を保管
 		$this->set(compact('biditem'));
