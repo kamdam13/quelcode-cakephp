@@ -110,7 +110,7 @@ class AuctionController extends AuctionBaseController
 				// 画像ファイル名を作成する
 				$image_file_name = $id.'_'.date('YmdHis').'_'.$this->request->data['image_file_name']['name'];
 				// 画像をディレクトリに保存する
-				$dir = new Folder(WWW_ROOT.'img/biditem'.$id, true);
+				$dir = new Folder(WWW_ROOT.'img/biditemImages/'.$id, true);
 				move_uploaded_file($image_file['tmp_name'],$dir->path.'/'.$image_file_name);
 				// ファイル名をエンティティにセットする
 				$biditem->image_file_name = $image_file_name;
