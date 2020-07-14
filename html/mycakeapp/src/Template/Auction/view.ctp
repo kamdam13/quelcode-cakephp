@@ -9,6 +9,14 @@
 	<td><?= h($biditem->name) ?></td>
 </tr>
 <tr>
+	<th scope="row">商品説明</th>
+	<th><?= h($biditem->description) ?></th>
+</tr>
+<tr>
+	<th scope="row">商品画像</th>
+	<th><?= $this->Html->image('biditemImages/'.$biditem->id.'/'.$biditem->image_file_name,['alt' => $biditem->name]) ?></th>
+</tr>
+<tr>
 	<th scope="row">商品ID</th>
 	<td><?= $this->Number->format($biditem->id) ?></td>
 </tr>
