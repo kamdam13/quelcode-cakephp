@@ -32,6 +32,10 @@
 	<th scope="row"><?= __('終了した？') ?></th>
 	<td><?= $biditem->finished ? __('Yes') : __('No'); ?></td>
 </tr>
+<tr>
+	<th scope="row">残り時間</th>
+	<td id="countdown"></td>
+</tr>
 </table>
 <div class="related">
 	<h4><?= __('落札情報') ?></h4>
@@ -82,3 +86,5 @@
 	<p><?='※入札は、終了しました。' ?></p>
 	<?php endif; ?>
 </div>
+<?= $this->Html->scriptBlock('let endtime ='."'".$biditem->endtime."'"); ?>
+<?= $this->Html->script('countdowntimer') ?>
