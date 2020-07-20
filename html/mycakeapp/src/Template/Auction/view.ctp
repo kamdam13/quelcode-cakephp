@@ -9,6 +9,14 @@
 	<td><?= h($biditem->name) ?></td>
 </tr>
 <tr>
+	<th scope="row">商品説明</th>
+	<th><?= h($biditem->description) ?></th>
+</tr>
+<tr>
+	<th scope="row">商品画像</th>
+	<th><?= $this->Html->image('biditemImages/'.$biditem->id.'/'.$biditem->image_file_name,['alt' => $biditem->name]) ?></th>
+</tr>
+<tr>
 	<th scope="row">商品ID</th>
 	<td><?= $this->Number->format($biditem->id) ?></td>
 </tr>
@@ -23,6 +31,10 @@
 <tr>
 	<th scope="row"><?= __('終了した？') ?></th>
 	<td><?= $biditem->finished ? __('Yes') : __('No'); ?></td>
+</tr>
+<tr>
+	<th scope="row">残り時間</th>
+	<td id="countdown"></td>
 </tr>
 </table>
 <div class="related">
@@ -74,3 +86,5 @@
 	<p><?='※入札は、終了しました。' ?></p>
 	<?php endif; ?>
 </div>
+<?= $this->Html->scriptBlock('let endtime ='."'".$biditem->endtime."'"); ?>
+<?= $this->Html->script('countdowntimer') ?>
