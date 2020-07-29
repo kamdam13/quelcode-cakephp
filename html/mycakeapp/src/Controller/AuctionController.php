@@ -212,4 +212,35 @@ class AuctionController extends AuctionBaseController
 			'limit' => 10])->toArray();
 		$this->set(compact('biditems'));
 	}
+
+	// 取引連絡の表示
+	public function transaction($bidinfo_id = null)
+	{
+		$bidinfo = $this->Bidinfo->get($bidinfo_id,[
+			'contain' => ['Users','Biditems','Biditems.Users',]
+		]);
+
+		$reciever_id = $bidinfo->user_id;
+		$shipper_id = $bidinfo->biditem->user_id;
+		
+		// アクセス制御
+		if(!isset($bidinfo) || !in_array($this->Auth->user('id'),[$reciever_id,$shipper_id])){
+			return $this->redirect(['action' => 'index']);
+		}
+
+		if($this->request->is('put')){
+			$bidinfo = $this->Bidinfo->patchEntity($bidinfo,$this->request->getData());
+			if ($this->Bidinfo->save($bidinfo)) {
+				$this->Flash->success(__('保存しました。'));
+			} else {
+				$this->Flash->error(__('保存に失敗しました。もう一度入力下さい。'));
+			}
+		}
+		
+
+		$this->set(compact('bidinfo'));
+		$this->set(compact('shipper_id'));
+		$this->set(compact('reciever_id'));
+
+	}
 }

@@ -74,7 +74,7 @@ class UsersController extends AppController
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-        $this->Auth->allow(['login', 'index', 'add']);
+        $this->Auth->allow(['login']);
     }
 
     // 認証時のロールのチェック
@@ -86,7 +86,11 @@ class UsersController extends AppController
         }
         // 一般ユーザーはfalse
         if ($user['role'] === 'user') {
-            return false;
+            if($this->request->action === 'view'){
+                return true;
+            }else{
+                return false;
+            }
         }
         // 他はすべてfalse
         return false;
