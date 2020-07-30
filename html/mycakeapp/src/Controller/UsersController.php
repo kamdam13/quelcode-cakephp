@@ -76,7 +76,7 @@ class UsersController extends AppController
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-        $this->Auth->allow(['login']);
+        $this->Auth->allow(['login','add','index']);
     }
 
     // 認証時のロールのチェック
