@@ -20,7 +20,7 @@
 <?php if (!empty($bidmsgs)): ?>
 	<?php foreach ($bidmsgs as $msg): ?>
 	<tr>
-		<td><?= h($msg->user->username) ?></td>
+		<td><?= $this->Html->link(__($msg->user->username), ['controller' => 'users','action' => 'view', $msg->user->id]) ?></td>
 		<td><?= h($msg->message) ?></td>
 		<td><?= h($msg->created) ?></td>
 	</tr>

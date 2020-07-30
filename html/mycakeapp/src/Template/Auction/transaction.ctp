@@ -21,6 +21,22 @@
 			<legend>商品の発送をお待ち下さい</legend>
 		</fieldset>
 	<?php elseif($authuser['id'] === $shipper_id): ?>
+		<table cellpadding="0" cellspacing="0">
+		<thead>
+			<tr>
+				<th scope="col">宛名</th>
+				<th scope="col">住所</th>
+				<th scope="col">電話番号</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><?= h($bidinfo->reciever_name) ?></td>
+				<td><?= h($bidinfo->reciever_address) ?></td>
+				<td><?= h($bidinfo->reciever_phone_number) ?></td>
+			</tr>
+		</tbody>
+		</table>
 		<fieldset>
 			<legend>発送先情報が入力されました。商品を発送しましたら、発送連絡をしてください。</legend>
 			<?= $this->Form->create($bidinfo); ?>

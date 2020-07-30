@@ -7,6 +7,7 @@ use App\Controller\AppController;
 
 use Cake\Auth\DefaultPasswordHasher; // added.
 use Cake\Event\Event; // added.
+use Cake\Collection\Collection;
 
 /**
  * Users Controller
@@ -21,6 +22,7 @@ class UsersController extends AppController
     public function initialize()
     {
         parent::initialize();
+        $this->loadModel('Ratings');
         // 各種コンポーネントのロード
         $this->loadComponent('RequestHandler');
         $this->loadComponent('Flash');
@@ -118,12 +120,18 @@ class UsersController extends AppController
      */
     public function view($id = null)
     {
-        $user = $this->Users->get($id, [
-            'contain' => ['Bidinfo', 'Biditems', 'Bidmessages', 'Bidrequests']
-        ]);
-
-        $this->set('user', $user);
-        $this->set('_serialize', ['user']);
+        $this->viewBuilder()->setLayout('auction');
+        $ratings = $this->paginate('Ratings', [
+            'conditions' => ['Ratings.rated_user_id' => $id],
+            'contain' => ['Users'],
+			'order' =>['created'=>'desc'], 
+            'limit' => 10]);
+        $average = (new Collection($this->Ratings->find('all',['conditions' => ['Ratings.rated_user_id' => $id]])))->avg('point');
+        $viewed_user = $this->Users->get($id);
+        $viewed_user->average = $average;
+        $this->set(compact('viewed_user'));
+		$this->set(compact('ratings'));
+        $this->set('authuser', $this->Auth->user());
     }
 
     /**
