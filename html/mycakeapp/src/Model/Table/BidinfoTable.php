@@ -72,6 +72,38 @@ class BidinfoTable extends Table
             ->requirePresence('price', 'create')
             ->notEmptyString('price');
 
+        $validator
+            ->scalar('reciever_name')
+            ->maxLength('reciever_name',100)
+            ->notEmptyString('reciever_name','update');
+
+        $validator
+            ->scalar('reciever_address')
+            ->maxLength('reciever_address',255)
+            ->notEmptyString('reciever_name','update');
+
+        $validator
+            ->scalar('reciever_phone_number')
+            ->numeric('reciever_phone_number')
+            ->maxLength('reciever_phone_number',11)
+            ->notEmptyString('reciever_phone_number','update');
+        
+        $validator
+            ->boolean('is_shipped')
+            ->notEmptyString('is_shipped');
+
+        $validator
+            ->boolean('is_recieved')
+            ->notEmptyString('is_recieved');
+
+        $validator
+            ->boolean('is_rated_by_shipper')
+            ->notEmptyString('is_rated_by_shipped');
+
+        $validator
+            ->boolean('is_rated_by_reciever')
+            ->notEmptyString('is_rated_by_reciever');
+
         return $validator;
     }
 

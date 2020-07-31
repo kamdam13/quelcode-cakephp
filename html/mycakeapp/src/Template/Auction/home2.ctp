@@ -7,6 +7,7 @@
 			<th class="main" scope="col"><?= $this->Paginator->sort('name') ?></th>
 			<th scope="col"><?= $this->Paginator->sort('created') ?></th>
 			<th scope="col" class="actions"><?= __('Actions') ?></th>
+			<th scope="col" class="actions"><?= __('Transactions') ?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -17,7 +18,12 @@
 				<td><?= h($biditem->created) ?></td>
 				<td class="actions">
 					<?php if (!empty($biditem->bidinfo)) : ?>
-						<?= $this->Html->link(__('View'), ['action' => 'msg', $biditem->bidinfo->id]) ?>
+						<?= $this->Html->link(__('メッセージ'), ['action' => 'msg', $biditem->bidinfo->id]) ?>
+					<?php endif; ?>
+				</td>
+				<td class="actions">
+					<?php if (!empty($biditem->bidinfo)) : ?>
+						<?= $this->Html->link(__('取引連絡'), ['action' => 'transaction', $biditem->bidinfo->id]) ?>
 					<?php endif; ?>
 				</td>
 			</tr>
