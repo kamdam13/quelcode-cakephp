@@ -26,7 +26,7 @@
 			<tr>
 				<th scope="col">宛名</th>
 				<th scope="col">住所</th>
-				<th scope="col">電話番号</th>
+				<th scope="col">電話番号(ハイフン抜きで入力してください)</th>
 			</tr>
 		</thead>
 		<tbody>

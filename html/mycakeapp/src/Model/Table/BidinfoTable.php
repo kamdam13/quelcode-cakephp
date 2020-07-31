@@ -84,6 +84,7 @@ class BidinfoTable extends Table
 
         $validator
             ->scalar('reciever_phone_number')
+            ->numeric('reciever_phone_number')
             ->maxLength('reciever_phone_number',13)
             ->notEmptyString('reciever_phone_number','update');
         
