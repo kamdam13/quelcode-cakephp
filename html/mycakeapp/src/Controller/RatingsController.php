@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use Cake\Event\Event; // added.
+use Exception;
 
 /**
  * Ratings Controller
@@ -19,7 +20,7 @@ class RatingsController extends AppController
         $this->loadModel('Users');
         $this->loadModel('Biditems');
         $this->loadModel('Ratings');
-		$this->loadModel('Bidinfo');
+        $this->loadModel('Bidinfo');
         // 各種コンポーネントのロード
         $this->loadComponent('RequestHandler');
         $this->loadComponent('Flash');
@@ -135,14 +136,18 @@ class RatingsController extends AppController
     {
         $rating = $this->Ratings->newEntity();
         if ($this->request->is('post')) {
-            $bidinfo = $this->Bidinfo->get($bidinfo_id,[
-                'contain' => ['Users','Biditems','Biditems.Users',]
-            ]);
+            try{
+                $bidinfo = $this->Bidinfo->get($bidinfo_id,[
+                    'contain' => ['Users','Biditems','Biditems.Users',]
+                ]);
+            }catch(Exception $e){
+                return $this->redirect(['controller' => 'auction','action' => 'index']);
+            }
     
             $reciever_id = $bidinfo->user_id;
             $shipper_id = $bidinfo->biditem->user_id;
             // アクセス制御
-            if(!isset($bidinfo) || !in_array($this->Auth->user('id'),[$reciever_id,$shipper_id])){
+            if(!in_array($this->Auth->user('id'),[$reciever_id,$shipper_id])){
                 return $this->redirect(['controller' => 'auction','action' => 'index']);
             }
             if($this->Auth->user('id') === $reciever_id){

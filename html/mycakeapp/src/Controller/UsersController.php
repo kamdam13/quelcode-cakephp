@@ -124,13 +124,13 @@ class UsersController extends AppController
         $ratings = $this->paginate('Ratings', [
             'conditions' => ['Ratings.rated_user_id' => $id],
             'contain' => ['Users'],
-			'order' =>['created'=>'desc'], 
+            'order' =>['created'=>'desc'], 
             'limit' => 10]);
         $average = (new Collection($this->Ratings->find('all',['conditions' => ['Ratings.rated_user_id' => $id]])))->avg('point');
         $viewed_user = $this->Users->get($id);
         $viewed_user->average = $average;
         $this->set(compact('viewed_user'));
-		$this->set(compact('ratings'));
+        $this->set(compact('ratings'));
         $this->set('authuser', $this->Auth->user());
     }
 

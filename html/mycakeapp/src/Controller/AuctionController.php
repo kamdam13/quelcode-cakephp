@@ -216,15 +216,19 @@ class AuctionController extends AuctionBaseController
 	// 取引連絡の表示
 	public function transaction($bidinfo_id = null)
 	{
-		$bidinfo = $this->Bidinfo->get($bidinfo_id,[
-			'contain' => ['Users','Biditems','Biditems.Users',]
-		]);
+		try{
+			$bidinfo = $this->Bidinfo->get($bidinfo_id,[
+				'contain' => ['Users','Biditems','Biditems.Users',]
+			]);
+		}catch(Exception $e){
+			return $this->redirect(['action' => 'index']);
+		}
 
 		$reciever_id = $bidinfo->user_id;
 		$shipper_id = $bidinfo->biditem->user_id;
 		
 		// アクセス制御
-		if(!isset($bidinfo) || !in_array($this->Auth->user('id'),[$reciever_id,$shipper_id])){
+		if(!in_array($this->Auth->user('id'),[$reciever_id,$shipper_id])){
 			return $this->redirect(['action' => 'index']);
 		}
 

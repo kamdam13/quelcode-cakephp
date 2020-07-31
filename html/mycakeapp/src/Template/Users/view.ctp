@@ -6,8 +6,8 @@
 		<th class="main" scope="col"><?= $this->Paginator->sort('id') ?></th>
 		<th scope="col" class="action"><?= $this->Paginator->sort('rated_by_user_id') ?></th>
 		<th scope="col"><?= $this->Paginator->sort('point') ?></th>
-        <th scope="col"><?= __('comment') ?></th>
-        <th scope="col"><?= $this->Paginator->sort('created') ?></th>
+		<th scope="col"><?= __('comment') ?></th>
+		<th scope="col"><?= $this->Paginator->sort('created') ?></th>
 	</tr>
 </thead>
 <tbody>
@@ -16,8 +16,8 @@
 		<td><?= h($rating->id) ?></td>
 		<td class="action"><?= $this->Html->link(__($rating->user->username), ['action' => 'view', $rating->rated_by_user_id]) ?></td>
 		<td><?= h($rating->point) ?></td>
-        <td><?= h($rating->comment) ?></td>
-        <td scope="col"><?= $rating->created ?></td>
+		<td><?= h($rating->comment) ?></td>
+		<td scope="col"><?= $rating->created ?></td>
 	</tr>
 	<?php endforeach; ?>
 </tbody>
