@@ -53,6 +53,9 @@ class BiditemsTable extends Table
         $this->hasMany('Bidrequests', [
             'foreignKey' => 'biditem_id',
         ]);
+        $this->hasMany('Biditemimages',[
+            'foreignKey' => 'biditem_id',
+        ]);
     }
 
     /**
@@ -78,13 +81,6 @@ class BiditemsTable extends Table
             ->maxLength('description',1000)
             ->requirePresence('description','create')
             ->notEmptyString('description');
-
-        $validator
-            ->scalar('image_file_name')
-            ->maxLength('image_file_name',255)
-            ->requirePresence('image_file_name','create')
-            ->allowEmptyString('image_file_name','create')
-            ->notEmptyString('image_file_name','update');
 
         $validator
             ->boolean('finished')
