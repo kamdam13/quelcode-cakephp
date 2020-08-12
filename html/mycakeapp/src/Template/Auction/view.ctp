@@ -14,7 +14,7 @@
 </tr>
 <tr>
 	<th scope="row">商品画像</th>
-	<th><?= $this->Html->image('biditemImages/'.$biditem->id.'/'.$biditem->image_file_name,['alt' => $biditem->name]) ?></th>
+	<th><?= $this->Html->image('biditemImages/'.$biditem->id.'/'.$biditem->biditemimage->biditem_image_file_name,['alt' => $biditem->name]) ?></th>
 </tr>
 <tr>
 	<th scope="row">商品ID</th>

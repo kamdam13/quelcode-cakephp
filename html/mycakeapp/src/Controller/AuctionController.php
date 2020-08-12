@@ -23,6 +23,7 @@ class AuctionController extends AuctionBaseController
 		$this->loadModel('Bidrequests');
 		$this->loadModel('Bidinfo');
 		$this->loadModel('Bidmessages');
+		$this->loadModel('Biditemimages');
 		// ログインしているユーザー情報をauthuserに設定
 		$this->set('authuser', $this->Auth->user());
 		// レイアウトをauctionに変更
@@ -44,7 +45,7 @@ class AuctionController extends AuctionBaseController
 	{
 		// $idのBiditemを取得
 		$biditem = $this->Biditems->get($id, [
-			'contain' => ['Users', 'Bidinfo', 'Bidinfo.Users']
+			'contain' => ['Users', 'Bidinfo', 'Bidinfo.Users','Biditemimages']
 		]);
 		// オークション終了時の処理
 		if ($biditem->endtime < new \DateTime('now') and $biditem->finished == 0) {
@@ -86,48 +87,60 @@ class AuctionController extends AuctionBaseController
 		// Biditemインスタンスを用意
 		$biditem = $this->Biditems->newEntity();
 		// POST送信時の処理
-		if ($this->request->is('post')) {
-			// $biditemにフォームの送信内容を反映
-			$biditem = $this->Biditems->patchEntity($biditem, $this->request->getData());
-			$biditem->image_file_name = '';
+		if (!$this->request->is('post')) {
+			$this->set(compact('biditem'));
+			return ;
+		}
 
-			try{
-				//画像のバリデーションチェック
-				$img_validation = array(IMAGETYPE_JPEG,IMAGETYPE_PNG,IMAGETYPE_GIF);
-				$image_file = $this->request->data['image_file_name'];
+		// $biditemにフォームの送信内容を反映
+		$biditem = $this->Biditems->patchEntity($biditem, $this->request->getData());
 
-				// 画像でなければ例外処理
+		try{
+			//画像のバリデーションチェック
+			$img_validation = array(IMAGETYPE_JPEG,IMAGETYPE_PNG,IMAGETYPE_GIF);
+			$image_files = $this->request->data['image_files'];
+			debug($image_files);
+			if(count($image_files) > 4){
+				throw new Exception('画像は4枚以下にしてください。');
+			}
+
+			// 画像でなければ例外処理
+			foreach ($image_files as $image_file) {
 				if(!in_array(\exif_imagetype($image_file['tmp_name']),$img_validation)){
 					throw new Exception('画像が読み込めませんでした。jpeg,pngまたはgif形式で選択してください。');
 				}
-
-				// $biditemを保存する
-				// saveに失敗したら例外処理
-				if (!$this->Biditems->save($biditem)) {
-					throw new Exception('保存に失敗しました。');
-				}
-				$id = $biditem->id;
-				// 画像ファイル名を作成する
-				$image_file_name = $id.'_'.date('YmdHis').'_'.$this->request->data['image_file_name']['name'];
-				// 画像をディレクトリに保存する
-				$dir = new Folder(WWW_ROOT.'img/biditemImages/'.$id, true);
-				move_uploaded_file($image_file['tmp_name'],$dir->path.'/'.$image_file_name);
-				// ファイル名をエンティティにセットする
-				$biditem->image_file_name = $image_file_name;
-				// $biditemを更新する
-				// saveに失敗したら例外処理
-				if (!$this->Biditems->save($biditem)) {
-					throw new Exception('保存に失敗しました。');
-				}
-				// 成功時のメッセージ
-				$this->Flash->success(__('保存しました。'));
-				// トップページ（index）に移動
-				return $this->redirect(['action' => 'index']);
-
-			}catch(Exception $e){
-				// 失敗時のメッセージ
-				$this->Flash->error(__($e->getMessage() . 'もう一度入力下さい。'));
 			}
+			// $biditemを保存する
+			// saveに失敗したら例外処理
+			if (!$this->Biditems->save($biditem)) {
+				throw new Exception('保存に失敗しました。');
+			}
+			$id = $biditem->id;
+			// 画像を保存するディレクトリ作成
+			$dir = new Folder(WWW_ROOT.'img/biditemImages/'.$id, true);
+			// 画像を保存する
+			foreach ($image_files as $index => $image_file) {
+				// 画像ファイル名を作成する
+				$image_file_name = $id.'_'.$index.'_'.date('YmdHis').'_'.$image_file['name'];
+				if(!move_uploaded_file($image_file['tmp_name'],$dir->path.'/'.$image_file_name)){
+					throw new Exception('画像のアップロードに失敗しました');
+				}
+				$biditemimage = $this->Biditemimages->newEntity();
+				$biditemimage->biditem_id = $id;
+				$biditemimage->biditem_image_file_name = $image_file_name;
+				if (!$this->Biditemimages->save($biditemimage)) {
+					throw new Exception('保存に失敗しました。');
+				}
+			}
+			
+			// 成功時のメッセージ
+			$this->Flash->success(__('保存しました。'));
+			// トップページ（index）に移動
+			return $this->redirect(['action' => 'index']);
+
+		}catch(Exception $e){
+			// 失敗時のメッセージ
+			$this->Flash->error(__($e->getMessage() . 'もう一度入力下さい。'));
 		}
 		// 値を保管
 		$this->set(compact('biditem'));
