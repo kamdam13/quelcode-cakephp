@@ -1,3 +1,5 @@
 docker/mysql/data
 phpmyadmin
 html/mycakeapp/webroot/img/
+html/mycakeapp/config/Migrations/schema-dump-default.lock
+html/mycakeapp/config/app.php
