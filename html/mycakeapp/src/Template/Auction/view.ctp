@@ -14,7 +14,7 @@
 </tr>
 <tr>
 	<th scope="row">商品画像</th>
-	<th><?= $this->Html->image('biditemImages/'.$biditem->id.'/'.$biditem->biditemimage->biditem_image_file_name,['alt' => $biditem->name]) ?></th>
+	<th><?= $this->Html->image('biditemImages/'.$biditem->id.'/'.$biditem->biditemimages[0]->image_file_name,['alt' => $biditem->name,'id' => 'biditemimage']) ?></th>
 </tr>
 <tr>
 	<th scope="row">商品ID</th>
@@ -86,5 +86,9 @@
 	<p><?='※入札は、終了しました。' ?></p>
 	<?php endif; ?>
 </div>
-<?= $this->Html->scriptBlock('let endtime ='."'".$biditem->endtime."'"); ?>
-<?= $this->Html->script('countdowntimer') ?>
+<?= $this->Html->scriptStart(); ?>
+let endtime = '<?= $biditem->endtime ?>';
+let image_files = <?= json_encode($biditem->biditemimages); ?>;
+<?= $this->Html->scriptEnd(); ?>
+<?= $this->Html->script('slideshow.js'); ?>
+<?= $this->Html->script('countdowntimer'); ?>

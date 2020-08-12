@@ -127,7 +127,7 @@ class AuctionController extends AuctionBaseController
 				}
 				$biditemimage = $this->Biditemimages->newEntity();
 				$biditemimage->biditem_id = $id;
-				$biditemimage->biditem_image_file_name = $image_file_name;
+				$biditemimage->image_file_name = $image_file_name;
 				if (!$this->Biditemimages->save($biditemimage)) {
 					throw new Exception('保存に失敗しました。');
 				}
